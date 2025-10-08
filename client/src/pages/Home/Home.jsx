@@ -5,7 +5,6 @@ import Hero from './components/Hero'
 import Footer from './components/Footer'
 import Features from './components/Features'
 import Testimonials from './components/Testimonials'
-import Team from './components/Team'
 import Benefits from './components/Benifits'
 import About from './components/About'
 import SignUp from '../../components/SignUp'
@@ -65,7 +64,7 @@ const Home = () => {
                     {/* <Testimonials/> */}
                     <Benefits />
                     {/* <Faq/> */}
-                    <Team />
+                    
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
                         <Footer />
                     </div>

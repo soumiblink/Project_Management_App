@@ -67,12 +67,12 @@ const Navbar = ({ setSignInOpen }) => {
 
   return (
     <Container>
-      <Logo>VEXA</Logo>
+      <Logo>PRO</Logo>
       <Menu>
         <MenuItem href="#home">Home</MenuItem>
         <MenuItem href="#features">Features</MenuItem>
         <MenuItem href="#benefits">Benifits</MenuItem>
-        <MenuItem href="#team">Team</MenuItem>
+        
       </Menu>
       <Button onClick={() => setSignInOpen(true)}>
         <AccountCircleOutlinedIcon /> Sign In

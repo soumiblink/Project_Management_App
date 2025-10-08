@@ -74,21 +74,16 @@ const Copyright = styled.p`
 function Footer() {
   return (
     <FooterContainer>
-      <Logo>VEXA</Logo>
+      <Logo>PRO</Logo>
       <Nav>
         <NavLink href="#home">Home</NavLink>
         <NavLink href="#features">Features</NavLink>
         <NavLink href="#benefits">Benefits</NavLink>
-        <NavLink href="#team">Team</NavLink>
+       
       </Nav>
-      <SocialMediaIcons>
-        <SocialMediaIcon href="#"><FacebookIcon /></SocialMediaIcon>
-        <SocialMediaIcon href="#"><TwitterIcon /></SocialMediaIcon>
-        <SocialMediaIcon href="#"><LinkedInIcon /></SocialMediaIcon>
-        <SocialMediaIcon href="#"><InstagramIcon /></SocialMediaIcon>
-      </SocialMediaIcons>
+      
       <Copyright>
-        &copy; 2023 Vexa. All rights reserved.
+        &copy; 2025 PRO. All rights reserved.
       </Copyright>
     </FooterContainer>
   );
