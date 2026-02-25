@@ -22,12 +22,18 @@ export async function GET(req: NextRequest) {
   try {
     await connectDB();
 
+    // Check both Authorization header and cookies
     const authHeader = req.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const cookieToken = req.cookies.get('accessToken')?.value;
+    
+    const token = authHeader?.startsWith('Bearer ') 
+      ? authHeader.substring(7) 
+      : cookieToken;
+
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = authHeader.substring(7);
     const decoded = verifyAccessToken(token);
 
     const { searchParams } = new URL(req.url);
@@ -43,7 +49,7 @@ export async function GET(req: NextRequest) {
 
       const isAuthorized =
         project.owner === decoded.userId ||
-        project.members.includes(decoded.userId);
+        project.members.some((member: any) => member.userId === decoded.userId);
 
       if (!isAuthorized) {
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -52,7 +58,10 @@ export async function GET(req: NextRequest) {
       query.projectId = projectId;
     } else {
       const userProjects = await Project.find({
-        $or: [{ owner: decoded.userId }, { members: decoded.userId }],
+        $or: [
+          { owner: decoded.userId }, 
+          { 'members.userId': decoded.userId }
+        ],
       }).select('_id');
 
       const projectIds = userProjects.map((p) => p._id.toString());
@@ -91,12 +100,18 @@ export async function POST(req: NextRequest) {
   try {
     await connectDB();
 
+    // Check both Authorization header and cookies
     const authHeader = req.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const cookieToken = req.cookies.get('accessToken')?.value;
+    
+    const token = authHeader?.startsWith('Bearer ') 
+      ? authHeader.substring(7) 
+      : cookieToken;
+
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = authHeader.substring(7);
     const decoded = verifyAccessToken(token);
 
     const body = await req.json();
@@ -109,7 +124,7 @@ export async function POST(req: NextRequest) {
 
     const isAuthorized =
       project.owner === decoded.userId ||
-      project.members.includes(decoded.userId);
+      project.members.some((member: any) => member.userId === decoded.userId);
 
     if (!isAuthorized) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });

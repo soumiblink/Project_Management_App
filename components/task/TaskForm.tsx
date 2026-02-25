@@ -30,7 +30,7 @@ export default function TaskForm({ open, onClose, onSubmit, task, projects, isLo
     status: task?.status || 'todo',
     priority: task?.priority || 'medium',
     projectId: task?.projectId || defaultProjectId || '',
-    assignedTo: task?.assignedTo || '',
+    assignedTo: task?.assignedTo || 'unassigned',
     dueDate: task?.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
   });
   const [projectMembers, setProjectMembers] = useState<IUserResponse[]>([]);
@@ -43,7 +43,7 @@ export default function TaskForm({ open, onClose, onSubmit, task, projects, isLo
         status: task.status,
         priority: task.priority,
         projectId: task.projectId,
-        assignedTo: task.assignedTo || '',
+        assignedTo: task.assignedTo || 'unassigned',
         dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
       });
     } else if (defaultProjectId) {
@@ -80,7 +80,12 @@ export default function TaskForm({ open, onClose, onSubmit, task, projects, isLo
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    // Convert 'unassigned' back to empty string for the API
+    const submitData = {
+      ...formData,
+      assignedTo: formData.assignedTo === 'unassigned' ? '' : formData.assignedTo
+    };
+    onSubmit(submitData);
   };
 
   const handleClose = () => {
@@ -90,7 +95,7 @@ export default function TaskForm({ open, onClose, onSubmit, task, projects, isLo
       status: 'todo',
       priority: 'medium',
       projectId: defaultProjectId || '',
-      assignedTo: '',
+      assignedTo: 'unassigned',
       dueDate: '',
     });
     setProjectMembers([]);
@@ -174,8 +179,8 @@ export default function TaskForm({ open, onClose, onSubmit, task, projects, isLo
               Assign To Team Member
             </Label>
             <Select
-              value={formData.assignedTo || 'unassigned'}
-              onValueChange={(value) => setFormData({ ...formData, assignedTo: value === 'unassigned' ? '' : value })}
+              value={formData.assignedTo}
+              onValueChange={(value) => setFormData({ ...formData, assignedTo: value })}
             >
               <SelectTrigger>
                 <SelectValue placeholder={projectMembers.length > 0 ? "Select team member" : "No team members in this project"} />

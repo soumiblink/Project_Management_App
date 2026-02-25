@@ -4,8 +4,22 @@ export async function POST() {
   try {
     const response = NextResponse.json({ message: 'Logged out successfully' });
 
-    response.cookies.delete('accessToken');
-    response.cookies.delete('refreshToken');
+    // Delete cookies with the same settings they were created with
+    response.cookies.set('accessToken', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 0,
+      path: '/',
+    });
+
+    response.cookies.set('refreshToken', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 0,
+      path: '/',
+    });
 
     return response;
   } catch (error) {
@@ -15,4 +29,9 @@ export async function POST() {
       { status: 500 }
     );
   }
+}
+
+// Also handle GET requests for direct navigation
+export async function GET() {
+  return POST();
 }

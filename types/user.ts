@@ -1,9 +1,12 @@
+export type UserRole = 'admin' | 'member';
+
 export interface IUser {
   _id: string;
   name: string;
   email: string;
   password?: string;
   avatar?: string;
+  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -13,6 +16,7 @@ export interface IUserResponse {
   name: string;
   email: string;
   avatar?: string;
+  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
 }

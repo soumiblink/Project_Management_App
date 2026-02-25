@@ -40,6 +40,22 @@ const TaskSchema = new Schema<ITask>(
     dueDate: {
       type: Date,
     },
+    attachments: [
+      {
+        filename: String,
+        url: String,
+        size: Number,
+        mimeType: String,
+        uploadedBy: {
+          type: String,
+          ref: 'User',
+        },
+        uploadedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

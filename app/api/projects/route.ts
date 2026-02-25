@@ -15,16 +15,25 @@ export async function GET(req: NextRequest) {
   try {
     await connectDB();
 
+    // Check both Authorization header and cookies
     const authHeader = req.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const cookieToken = req.cookies.get('accessToken')?.value;
+    
+    const token = authHeader?.startsWith('Bearer ') 
+      ? authHeader.substring(7) 
+      : cookieToken;
+
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = authHeader.substring(7);
     const decoded = verifyAccessToken(token);
 
     const projects = await Project.find({
-      $or: [{ owner: decoded.userId }, { members: decoded.userId }],
+      $or: [
+        { owner: decoded.userId }, 
+        { 'members.userId': decoded.userId }
+      ],
     }).sort({ createdAt: -1 });
 
     const projectsWithStats = await Promise.all(
@@ -57,12 +66,18 @@ export async function POST(req: NextRequest) {
   try {
     await connectDB();
 
+    // Check both Authorization header and cookies
     const authHeader = req.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const cookieToken = req.cookies.get('accessToken')?.value;
+    
+    const token = authHeader?.startsWith('Bearer ') 
+      ? authHeader.substring(7) 
+      : cookieToken;
+
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = authHeader.substring(7);
     const decoded = verifyAccessToken(token);
 
     const body = await req.json();
@@ -71,7 +86,11 @@ export async function POST(req: NextRequest) {
     const project = await Project.create({
       ...validatedData,
       owner: decoded.userId,
-      members: [decoded.userId],
+      members: [{
+        userId: decoded.userId,
+        role: 'admin',
+        joinedAt: new Date(),
+      }],
     });
 
     return NextResponse.json({ project: project.toObject() }, { status: 201 });

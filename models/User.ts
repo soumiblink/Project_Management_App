@@ -24,6 +24,11 @@ const UserSchema = new Schema<IUser>(
       type: String,
       default: '',
     },
+    role: {
+      type: String,
+      enum: ['admin', 'member'],
+      default: 'member',
+    },
   },
   {
     timestamps: true,

@@ -6,6 +6,7 @@ import NotificationPanel from './NotificationPanel';
 import { Button } from '@/components/ui/button';
 import { Search, Settings, LogOut, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import axiosInstance from '@/lib/axios';
 
 export default function Navbar() {
   const { user, logout } = useAuthStore();
@@ -35,8 +36,8 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    logout();
-    router.push('/login');
+    // Navigate to logout page which will handle the full logout process
+    router.push('/logout');
   };
 
   const getGreeting = () => {

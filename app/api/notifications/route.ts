@@ -7,12 +7,18 @@ export async function GET(req: NextRequest) {
   try {
     await connectDB();
 
+    // Check both Authorization header and cookies
     const authHeader = req.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const cookieToken = req.cookies.get('accessToken')?.value;
+    
+    const token = authHeader?.startsWith('Bearer ') 
+      ? authHeader.substring(7) 
+      : cookieToken;
+
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = authHeader.substring(7);
     const decoded = verifyAccessToken(token);
 
     const notifications = await Notification.find({ userId: decoded.userId })
@@ -41,12 +47,18 @@ export async function PUT(req: NextRequest) {
   try {
     await connectDB();
 
+    // Check both Authorization header and cookies
     const authHeader = req.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const cookieToken = req.cookies.get('accessToken')?.value;
+    
+    const token = authHeader?.startsWith('Bearer ') 
+      ? authHeader.substring(7) 
+      : cookieToken;
+
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = authHeader.substring(7);
     const decoded = verifyAccessToken(token);
 
     const body = await req.json();

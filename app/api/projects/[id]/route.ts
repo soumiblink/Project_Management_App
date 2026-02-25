@@ -19,12 +19,18 @@ export async function GET(
   try {
     await connectDB();
 
+    // Check both Authorization header and cookies
     const authHeader = req.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const cookieToken = req.cookies.get('accessToken')?.value;
+    
+    const token = authHeader?.startsWith('Bearer ') 
+      ? authHeader.substring(7) 
+      : cookieToken;
+
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = authHeader.substring(7);
     const decoded = verifyAccessToken(token);
 
     const project = await Project.findById(params.id);
@@ -34,7 +40,7 @@ export async function GET(
 
     const isAuthorized =
       project.owner === decoded.userId ||
-      project.members.includes(decoded.userId);
+      project.members.some((member: any) => member.userId === decoded.userId);
 
     if (!isAuthorized) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -69,12 +75,18 @@ export async function PUT(
   try {
     await connectDB();
 
+    // Check both Authorization header and cookies
     const authHeader = req.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const cookieToken = req.cookies.get('accessToken')?.value;
+    
+    const token = authHeader?.startsWith('Bearer ') 
+      ? authHeader.substring(7) 
+      : cookieToken;
+
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = authHeader.substring(7);
     const decoded = verifyAccessToken(token);
 
     const project = await Project.findById(params.id);
@@ -119,12 +131,18 @@ export async function DELETE(
   try {
     await connectDB();
 
+    // Check both Authorization header and cookies
     const authHeader = req.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const cookieToken = req.cookies.get('accessToken')?.value;
+    
+    const token = authHeader?.startsWith('Bearer ') 
+      ? authHeader.substring(7) 
+      : cookieToken;
+
+    if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = authHeader.substring(7);
     const decoded = verifyAccessToken(token);
 
     const project = await Project.findById(params.id);

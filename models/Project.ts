@@ -20,8 +20,20 @@ const ProjectSchema = new Schema<IProject>(
     },
     members: [
       {
-        type: String,
-        ref: 'User',
+        userId: {
+          type: String,
+          ref: 'User',
+          required: true,
+        },
+        role: {
+          type: String,
+          enum: ['admin', 'member'],
+          default: 'member',
+        },
+        joinedAt: {
+          type: Date,
+          default: Date.now,
+        },
       },
     ],
     status: {
