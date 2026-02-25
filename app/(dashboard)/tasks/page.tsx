@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import KanbanBoard from '@/components/task/KanbanBoard';
@@ -20,9 +20,24 @@ export default function TasksPage() {
   const [isFetching, setIsFetching] = useState(true);
   const socket = useSocket();
 
+  const fetchData = useCallback(async () => {
+    try {
+      const [tasksRes, projectsRes] = await Promise.all([
+        axiosInstance.get('/api/tasks'),
+        axiosInstance.get('/api/projects'),
+      ]);
+      setTasks(tasksRes.data.tasks);
+      setProjects(projectsRes.data.projects);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsFetching(false);
+    }
+  }, [setTasks]);
+
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   useEffect(() => {
     if (!socket) return;
@@ -44,22 +59,7 @@ export default function TasksPage() {
       socket.off('task-updated');
       socket.off('task-deleted');
     };
-  }, [socket]);
-
-  const fetchData = async () => {
-    try {
-      const [tasksRes, projectsRes] = await Promise.all([
-        axiosInstance.get('/api/tasks'),
-        axiosInstance.get('/api/projects'),
-      ]);
-      setTasks(tasksRes.data.tasks);
-      setProjects(projectsRes.data.projects);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setIsFetching(false);
-    }
-  };
+  }, [socket, addTask, updateTask, deleteTask]);
 
   const handleCreateTask = async (data: Partial<ITask>) => {
     setIsLoading(true);

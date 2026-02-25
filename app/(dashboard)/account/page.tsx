@@ -10,7 +10,7 @@ import { User, Mail, Lock, Save, Camera } from 'lucide-react';
 import axiosInstance from '@/lib/axios';
 
 export default function AccountPage() {
-  const { user, setUser } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
@@ -40,7 +40,7 @@ export default function AccountPage() {
       }
 
       const response = await axiosInstance.put('/api/auth/me', updateData);
-      setUser(response.data.user);
+      updateUser(response.data.user);
       setIsEditing(false);
       setFormData({
         ...formData,

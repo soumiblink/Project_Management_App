@@ -55,7 +55,7 @@ export async function GET(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const taskObj = task.toObject();
+    const taskObj: any = task.toObject();
 
     if (task.assignedTo) {
       const assignedUser = await User.findById(task.assignedTo).select('-password');
@@ -135,7 +135,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Task not found' }, { status: 404 });
     }
 
-    const taskObj = updatedTask.toObject();
+    const taskObj: any = updatedTask.toObject();
 
     if (updatedTask.assignedTo) {
       const assignedUser = await User.findById(updatedTask.assignedTo).select('-password');

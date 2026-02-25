@@ -35,10 +35,10 @@ export async function POST(req: NextRequest) {
 
     // Check permissions
     const userMember = project.members.find(
-      (m: any) => m.userId.toString() === authResult.user!.userId
-    );
+      (m: any) => m.userId?.toString() === authResult.user!.userId
+    ) as { userId: string; role: string; joinedAt: Date } | undefined;
     
-    if (!canInviteMembers(authResult.user!.role, userMember?.role)) {
+    if (!canInviteMembers(authResult.user!.role, userMember?.role || 'member')) {
       return NextResponse.json(
         { error: 'You do not have permission to invite members' },
         { status: 403 }

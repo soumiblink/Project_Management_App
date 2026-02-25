@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
 
     const tasksWithDetails = await Promise.all(
       tasks.map(async (task) => {
-        const taskObj = task.toObject();
+        const taskObj: any = task.toObject();
         
         if (task.assignedTo) {
           const assignedUser = await User.findById(task.assignedTo).select('-password');
@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
       dueDate: validatedData.dueDate ? new Date(validatedData.dueDate) : undefined,
     });
 
-    const taskObj = task.toObject();
+    const taskObj: any = task.toObject();
     const createdByUser = await User.findById(decoded.userId).select('-password');
     taskObj.createdByUser = createdByUser?.toObject();
 

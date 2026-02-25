@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { 
@@ -37,11 +37,7 @@ export default function Sidebar() {
   });
   const [upcomingTasks, setUpcomingTasks] = useState<ITask[]>([]);
 
-  useEffect(() => {
-    fetchSidebarData();
-  }, []);
-
-  const fetchSidebarData = async () => {
+  const fetchSidebarData = useCallback(async () => {
     try {
       const response = await axiosInstance.get('/api/tasks');
       const allTasks: ITask[] = response.data.tasks;
@@ -83,7 +79,11 @@ export default function Sidebar() {
     } catch (error) {
       console.error('Error fetching sidebar data:', error);
     }
-  };
+  }, [user?._id]);
+
+  useEffect(() => {
+    fetchSidebarData();
+  }, [fetchSidebarData]);
 
   const handleLogout = () => {
     logout();

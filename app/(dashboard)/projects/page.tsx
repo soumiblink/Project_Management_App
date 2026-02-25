@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, FolderKanban } from 'lucide-react';
 import ProjectCard from '@/components/project/ProjectCard';
@@ -16,11 +16,7 @@ export default function ProjectsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       const response = await axiosInstance.get('/api/projects');
       setProjects(response.data.projects);
@@ -29,7 +25,11 @@ export default function ProjectsPage() {
     } finally {
       setIsFetching(false);
     }
-  };
+  }, [setProjects]);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
 
   const handleCreateProject = async (data: Partial<IProject>) => {
     setIsLoading(true);

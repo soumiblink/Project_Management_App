@@ -74,15 +74,15 @@ export async function POST(req: NextRequest) {
 
     // Check permissions
     const userMember = project.members.find(
-      (m: any) => m.userId.toString() === authResult.user!.userId
-    );
+      (m: any) => m.userId?.toString() === authResult.user!.userId
+    ) as { userId: string; role: string; joinedAt: Date } | undefined;
 
     if (
       !canModifyTask(
         authResult.user!.role,
         task.assignedTo,
         authResult.user!.userId,
-        userMember?.role
+        userMember?.role || 'member'
       )
     ) {
       return NextResponse.json(
@@ -165,15 +165,15 @@ export async function DELETE(req: NextRequest) {
 
     // Check permissions
     const userMember = project.members.find(
-      (m: any) => m.userId.toString() === authResult.user!.userId
-    );
+      (m: any) => m.userId?.toString() === authResult.user!.userId
+    ) as { userId: string; role: string; joinedAt: Date } | undefined;
 
     if (
       !canModifyTask(
         authResult.user!.role,
         task.assignedTo,
         authResult.user!.userId,
-        userMember?.role
+        userMember?.role || 'member'
       )
     ) {
       return NextResponse.json(

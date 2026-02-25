@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,11 +28,34 @@ export default function ProjectDetailPage() {
   const [isFetching, setIsFetching] = useState(true);
   const socket = useSocket();
 
+  const fetchProjectData = useCallback(async () => {
+    try {
+      const [projectRes, tasksRes, usersRes] = await Promise.all([
+        axiosInstance.get(`/api/projects/${projectId}`),
+        axiosInstance.get(`/api/tasks?projectId=${projectId}`),
+        axiosInstance.get('/api/users'),
+      ]);
+
+      setProject(projectRes.data.project);
+      setTasks(tasksRes.data.tasks);
+
+      const allUsers = usersRes.data.users || [];
+      const members = allUsers.filter((user: IUserResponse) =>
+        projectRes.data.project.members.some((m: any) => m.userId === user._id)
+      );
+      setProjectMembers(members);
+    } catch (error) {
+      console.error('Error fetching project data:', error);
+    } finally {
+      setIsFetching(false);
+    }
+  }, [projectId]);
+
   useEffect(() => {
     if (projectId) {
       fetchProjectData();
     }
-  }, [projectId]);
+  }, [projectId, fetchProjectData]);
 
   useEffect(() => {
     if (!socket || !projectId) return;
@@ -62,30 +85,6 @@ export default function ProjectDetailPage() {
       socket.off('task-deleted');
     };
   }, [socket, projectId]);
-
-  const fetchProjectData = async () => {
-    try {
-      const [projectRes, tasksRes, usersRes] = await Promise.all([
-        axiosInstance.get(`/api/projects/${projectId}`),
-        axiosInstance.get(`/api/tasks?projectId=${projectId}`),
-        axiosInstance.get('/api/users'),
-      ]);
-      setProject(projectRes.data.project);
-      setTasks(tasksRes.data.tasks);
-      
-      // Filter members who are part of this project
-      const allUsers = usersRes.data.users || [];
-      const members = allUsers.filter((user: IUserResponse) => 
-        projectRes.data.project.members?.includes(user._id)
-      );
-      setProjectMembers(members);
-    } catch (error) {
-      console.error('Error fetching project data:', error);
-      router.push('/projects');
-    } finally {
-      setIsFetching(false);
-    }
-  };
 
   const handleCreateTask = async (data: Partial<ITask>) => {
     setIsLoading(true);

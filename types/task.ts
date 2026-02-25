@@ -1,6 +1,15 @@
 export type TaskStatus = 'todo' | 'in-progress' | 'done';
 export type TaskPriority = 'low' | 'medium' | 'high';
 
+export interface ITaskAttachment {
+  filename: string;
+  url: string;
+  size: number;
+  mimeType: string;
+  uploadedBy: string;
+  uploadedAt: Date;
+}
+
 export interface ITask {
   _id: string;
   title: string;
@@ -11,6 +20,7 @@ export interface ITask {
   assignedTo?: string;
   createdBy: string;
   dueDate?: Date;
+  attachments?: ITaskAttachment[];
   createdAt: Date;
   updatedAt: Date;
 }
