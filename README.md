@@ -1,4 +1,4 @@
-# ProjectFlow - Production-Grade SaaS Project Management Application
+# PRO - A Project Management Application
 
 A modern, full-stack project management application built with Next.js 14, TypeScript, MongoDB, and Socket.io for real-time collaboration.
 
@@ -317,18 +317,10 @@ To enable browser notifications:
 - Click notifications to navigate to relevant pages
 - Mark individual or all notifications as read
 
-## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
 
 ## License
 
 This project is licensed under the MIT License.
 
-## Support
 
-For support, email support@projectflow.com or open an issue in the repository.
