@@ -81,9 +81,10 @@ export default function TaskForm({ open, onClose, onSubmit, task, projects, isLo
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Convert 'unassigned' back to empty string for the API
-    const submitData = {
+    const submitData: any = {
       ...formData,
-      assignedTo: formData.assignedTo === 'unassigned' ? '' : formData.assignedTo
+      assignedTo: formData.assignedTo === 'unassigned' ? '' : formData.assignedTo,
+      dueDate: formData.dueDate || undefined,
     };
     onSubmit(submitData);
   };

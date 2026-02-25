@@ -1,14 +1,21 @@
 import nodemailer from 'nodemailer';
 
-const transporter = nodemailer.createTransporter({
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: process.env.SMTP_SECURE === 'true',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASSWORD,
-  },
-});
+let transporter: any = null;
+
+function getTransporter() {
+  if (!transporter) {
+    transporter = nodemailer.createTransporter({
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: process.env.SMTP_SECURE === 'true',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
+      },
+    });
+  }
+  return transporter;
+}
 
 interface SendEmailParams {
   to: string;
@@ -24,7 +31,8 @@ async function sendEmail({ to, subject, html, text }: SendEmailParams) {
       return { success: false, message: 'SMTP not configured' };
     }
 
-    await transporter.sendMail({
+    const mailer = getTransporter();
+    await mailer.sendMail({
       from: `"PRO Project Management" <${process.env.SMTP_USER}>`,
       to,
       subject,

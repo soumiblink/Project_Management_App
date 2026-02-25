@@ -118,8 +118,8 @@ export async function POST(req: NextRequest) {
       uploadedAt: new Date(),
     };
 
-    task.attachments = task.attachments || [];
-    task.attachments.push(attachment as any);
+    (task as any).attachments = (task as any).attachments || [];
+    (task as any).attachments.push(attachment);
     await task.save();
 
     return NextResponse.json({
@@ -183,7 +183,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     // Remove attachment from task
-    task.attachments = task.attachments?.filter((a: any) => a.url !== attachmentUrl) || [];
+    (task as any).attachments = (task as any).attachments?.filter((a: any) => a.url !== attachmentUrl) || [];
     await task.save();
 
     return NextResponse.json({ message: 'Attachment deleted successfully' });
